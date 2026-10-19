@@ -1,0 +1,70 @@
+<?php
+include "koneksi.php";
+
+$query = mysqli_query($koneksi, "SELECT * FROM buku");
+
+if (!$query) {
+    die("Query gagal: " . mysqli_error($koneksi));
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Buku</title>
+</head>
+
+<body>
+
+<h2>DATA BUKU</h2>
+
+
+<br><br>
+
+<table border="1" cellpadding="10" cellspacing="0">
+
+    <tr>
+        <th>Gambar</th>
+        <th>Judul</th>
+        <th>Penulis</th>
+        <th>Sinopsis</th>
+        <th>Stok</th>
+        <th>Aksi</th>
+    </tr>
+
+    <?php while ($data = mysqli_fetch_assoc($query)) { ?>
+
+    <tr>
+
+        <td>
+            <?php if (($data['gambar'])) { ?>
+                <img src="uploads/<?= htmlspecialchars($data['gambar']); ?>" 
+                     width="100">
+            <?php } else { ?>
+                Tidak ada gambar
+            <?php } ?>
+        </td>
+
+        <td><?= htmlspecialchars($data['judul']); ?></td>
+
+        <td><?= htmlspecialchars($data['penulis']); ?></td>
+
+        <td><?= htmlspecialchars($data['sinopsis']); ?></td>
+
+        <td><?= $data['stok']; ?></td>
+
+        <td>
+
+            <a href="detail.php?id=<?= $data['buku_id']; ?>">
+                <button>Detail Buku</button>
+            </a>
+        </td>
+
+    </tr>
+
+    <?php } ?>
+
+</table>
+
+</body>
+</html>
