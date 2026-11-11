@@ -5,9 +5,20 @@ include "koneksi.php";
 
 $role = $_SESSION['role'] ?? '';
 
-$query = mysqli_query($koneksi, "
+// PENCARIAN BUKU
+$keyword = $_GET['keyword'] ?? '';
+
+$stmt = mysqli_prepare($koneksi, "
     SELECT * FROM buku
+    WHERE judul LIKE ? OR penulis LIKE ?
 ");
+
+$cari = "%" . $keyword . "%";
+
+mysqli_stmt_bind_param($stmt, "ss", $cari, $cari);
+mysqli_stmt_execute($stmt);
+
+$query = mysqli_stmt_get_result($stmt);
 
 if (!$query) {
     die("Query gagal: " . mysqli_error($koneksi));
@@ -21,12 +32,14 @@ if (!$query) {
 <head>
     <meta charset="UTF-8">
     <title>Data Buku</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
 <?php include "navbar.php"; ?>
+
 <main class="page">
 
 <h2>DATA BUKU</h2>
@@ -41,6 +54,27 @@ if (!$query) {
 
 <br><br>
 
+<!-- FORM PENCARIAN -->
+
+<form method="GET" action="">
+
+    <input
+        type="text"
+        name="keyword"
+        placeholder="Cari judul atau penulis buku..."
+        value="<?= htmlspecialchars($keyword); ?>"
+    >
+
+    <button type="submit">Cari Buku</button>
+
+    <a href="tampil.php">
+        <button type="button">Reset</button>
+    </a>
+
+</form>
+
+<br>
+
 <table border="1" cellpadding="10" cellspacing="0">
 
 <tr>
@@ -51,6 +85,8 @@ if (!$query) {
     <th>Stok</th>
     <th>Aksi</th>
 </tr>
+
+<?php if (mysqli_num_rows($query) > 0) { ?>
 
 <?php while ($data = mysqli_fetch_assoc($query)) { ?>
 
@@ -91,14 +127,9 @@ if (!$query) {
 
     <td>
 
-        <!-- SEMUA USER BOLEH DETAIL -->
-
         <a href="detail.php?id=<?= $data['buku_id']; ?>">
             <button>Detail Buku</button>
         </a>
-
-
-        <!-- KHUSUS ADMIN DAN PETUGAS -->
 
         <?php if ($role == 'admin' || $role == 'petugas') { ?>
 
@@ -117,6 +148,16 @@ if (!$query) {
 
     </td>
 
+</tr>
+
+<?php } ?>
+
+<?php } else { ?>
+
+<tr>
+    <td colspan="6" align="center">
+        Buku tidak ditemukan.
+    </td>
 </tr>
 
 <?php } ?>
@@ -152,5 +193,6 @@ if (!$query) {
 <?php } ?>
 
 </main>
+
 </body>
 </html>

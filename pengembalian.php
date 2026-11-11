@@ -82,12 +82,6 @@ if (!$query) {
         <a href="pengembalian_edit.php?id=<?= $data['pengembalian_id']; ?>">
             <button>Edit</button>
         </a>
-
-        <a href="pengembalian_delete.php?id=<?= $data['pengembalian_id']; ?>"
-           onclick="return confirm('Yakin ingin menghapus data pengembalian ini?');">
-            <button>Delete</button>
-        </a>
-
     </td>
 
 </tr>

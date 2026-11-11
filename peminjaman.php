@@ -1,7 +1,6 @@
 <?php
-session_start();
 include "koneksi.php";
-include "auth.php";
+include_once "auth.php";
 
 wajib_login();
 $role = $_SESSION['role'];
@@ -84,13 +83,23 @@ foreach ($rows as $r) { $jml[kelas_status($r['status'])]++; }
         <?php if (!$anggota) { ?>
           <?php if (strtolower($data['status']) == 'menunggu') { ?>
             <a href="peminjaman_disetujui.php?id=<?= (int)$data['peminjaman_id']; ?>"><button>Setujui</button></a>
-            <a href="peminjaman_ditolak.php?id=<?= (int)$data['peminjaman_id']; ?>"
-               onclick="return confirm('Tolak peminjaman ini?');"><button>Tolak</button></a>
+            <form action="peminjaman_ditolak.php" method="POST"
+      onsubmit="return confirm('Tolak peminjaman ini?');">
+    <input type="hidden" name="id"
+           value="<?= (int)$data['peminjaman_id']; ?>">
+
+    <textarea name="alasan"
+              placeholder="Masukkan alasan penolakan..."
+              required></textarea>
+
+    <button type="submit">Tolak</button>
+</form>
           <?php } ?>
           <a href="peminjaman_edit.php?id=<?= (int)$data['peminjaman_id']; ?>"><button>Proses</button></a>
           <a href="peminjaman_delete.php?id=<?= (int)$data['peminjaman_id']; ?>"
              onclick="return confirm('Yakin ingin menghapus peminjaman ini?');"><button>Delete</button></a>
         <?php } ?>
+        
       </td>
     </tr>
     <?php } ?>

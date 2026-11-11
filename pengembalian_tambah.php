@@ -1,13 +1,23 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 include "koneksi.php";
+
+// Pastikan yang login adalah petugas
+if (!isset($_SESSION['petugas_id']) || $_SESSION['role'] != 'petugas') {
+    die("Akses ditolak. Silakan login sebagai petugas.");
+}
+
+$petugas_id = $_SESSION['petugas_id'];
 
 if (isset($_POST['simpan'])) {
 
     $peminjaman_id = $_POST['peminjaman_id'];
     $tanggal_kembali = $_POST['tanggal_kembali'];
-    $petugas_id = $_POST['petugas_id'];
     $kondisi_buku = $_POST['kondisi_buku'];
+
     $admin_id = 1;
 
     // Ambil data peminjaman
@@ -231,14 +241,7 @@ $query_peminjaman = mysqli_query($koneksi, "
 ");
 
 
-// =====================================================
-// AMBIL PETUGAS
-// =====================================================
 
-$query_petugas = mysqli_query($koneksi, "
-    SELECT *
-    FROM petugas
-");
 ?>
 
 <!DOCTYPE html>
@@ -342,23 +345,7 @@ $query_petugas = mysqli_query($koneksi, "
 
     <br>
 
-    <select name="petugas_id" required>
-
-        <option value="">
-            -- Pilih Petugas --
-        </option>
-
-        <?php while ($petugas = mysqli_fetch_assoc($query_petugas)) { ?>
-
-            <option value="<?= $petugas['petugas_id']; ?>">
-
-                <?= htmlspecialchars($petugas['nama']); ?>
-
-            </option>
-
-        <?php } ?>
-
-    </select>
+   
 
     <br><br>
 

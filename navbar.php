@@ -19,6 +19,7 @@ $_dash = ['admin'=>'dashboard_admin.php','petugas'=>'dashboard_petugas.php','ang
         <a href="peminjaman.php">Peminjaman</a>
         <a href="pengembalian.php">Pengembalian</a>
         <a href="histori.php">Histori</a>
+        <a href="log_transaksi.php">Log</a>
       <?php } ?>
     </nav>
 
